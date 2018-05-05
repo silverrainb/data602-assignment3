@@ -1,9 +1,0 @@
-bs4
-datetime
-numpy
-plotly
-requests~=2.18.4
-websocket-client
-pymongo
-statsmodels
-pandas

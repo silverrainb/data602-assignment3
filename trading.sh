@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
+docker network create mongo-network
+
 docker pull mongo:3.7
-docker run -d --rm -v /Users/rosekoh/OneDrive/DATA602/assignment3/data602-assignment3/db:/data/db --name trading-database mongo:3.7
-#docker run -d --rm -v /Users/username/data602-assignment3/db:/data/db --name trading-database mongo:3.7
+docker run -d --rm -v `pwd`/db:/data/db --network mongo-network --name trading-database mongo:3.7
+
 #docker pull silverrainb/crypto-forecast
 docker build -t crypto-forecast .
-#docker run --rm --name trading-app --link trading-database:mongo -v /Users/username/data602-assignment3/db:/data/db -it silverrainb/crypto-forecast
-docker run --rm --name trading-app --link trading-database:mongo -it crypto-forecast
+#docker run --rm --name trading-app --network mongo-network -it silverrainb/crypto-forecast
+docker run --rm --name trading-app --network mongo-network -it crypto-forecast
+#docker run --rm --name trading-app --network mongo-network -it crypto-forecast sh -c 'bash'
 docker kill trading-database
 
+docker network rm mongo-network

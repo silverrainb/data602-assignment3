@@ -2,4 +2,5 @@
 
 cd /usr/src/app/trading
 git pull
-python /usr/src/app/trading/trading/main.py
+python3 /usr/src/app/trading/trading/main.py
+

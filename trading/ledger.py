@@ -2,7 +2,7 @@ import pandas as pd
 from pymongo import MongoClient
 import record as dr
 
-mongo_client = MongoClient('localhost', 27017)
+mongo_client = MongoClient('trading-database', 27017)
 db = mongo_client['crypto']
 
 

@@ -41,7 +41,10 @@ def main(argv):
             print(horizontal_line * 3)
             pl_data = ledger.print_pl_cache()
             print(pl_data)
-            pl_display(pl_data)
+            try:
+                pl_display(pl_data)
+            except ValueError as e:
+                print("No transactions have been performed to display the history" + str(e))
             print(horizontal_line * 3)
             print("Should the graph fails to load in the browser,")
             print("please click: https://plot.ly/~silverrainb/10/vwap-executedprice-total-pl-cash/")

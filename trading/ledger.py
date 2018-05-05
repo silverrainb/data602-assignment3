@@ -154,10 +154,13 @@ class Ledger:
         db.blotter_collection.insert(records)
 
     def print_blotter(self):
-        # print blotter from mongodb
-        data = pd.DataFrame(list(db.blotter_collection.find()))
-        data = data[['Timestamp', 'Side', 'Ticker', 'Volume', 'PricePerShare', 'TotalCosts', 'Cash']].sort_values(by='Timestamp', ascending=False)
-        print(data)
+        try:
+            # print blotter from mongodb
+            data = pd.DataFrame(list(db.blotter_collection.find()))
+            data = data[['Timestamp', 'Side', 'Ticker', 'Volume', 'PricePerShare', 'TotalCosts', 'Cash']].sort_values(by='Timestamp', ascending=False)
+            print(data)
+        except ValueError as e:
+            print("No transactions have been performed to display the history" + str(e))
 
     def update_pl_cache(self, timestamp, blotter_cash, executed_price):
         # cash, total_pl, vwap from self._positions
@@ -176,7 +179,10 @@ class Ledger:
         db.positions_collection.insert(cache)
 
     def print_pl_cache(self):
-        pl_data = pd.DataFrame(list(db.positions_collection.find()))
-        pl_data = pl_data[['Timestamp', 'Cash', 'Total_PL', 'VWAP', 'ExecutedPrice']].sort_values(
-            by='Timestamp', ascending=False)
-        return pl_data
+        try:
+            pl_data = pd.DataFrame(list(db.positions_collection.find()))
+            pl_data = pl_data[['Timestamp', 'Cash', 'Total_PL', 'VWAP', 'ExecutedPrice']].sort_values(
+                by='Timestamp', ascending=False)
+            return pl_data
+        except ValueError as e:
+            print("No transactions have been performed to display the history" + str(e))

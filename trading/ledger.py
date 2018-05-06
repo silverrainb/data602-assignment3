@@ -154,13 +154,14 @@ class Ledger:
         db.blotter_collection.insert(records)
 
     def print_blotter(self):
-        try:
-            # print blotter from mongodb
+        if len(self._blotter.index) > 0:
             data = pd.DataFrame(list(db.blotter_collection.find()))
-            data = data[['Timestamp', 'Side', 'Ticker', 'Volume', 'PricePerShare', 'TotalCosts', 'Cash']].sort_values(by='Timestamp', ascending=False)
+            data = data[
+                ['Timestamp', 'Side', 'Ticker', 'Volume', 'PricePerShare', 'TotalCosts', 'Cash']].sort_values(
+                by='Timestamp', ascending=False)
             print(data)
-        except ValueError as e:
-            print("No transactions have been performed to display the history" + str(e))
+        else:
+            print("No transactions have been performed to display the history")
 
     def update_pl_cache(self, timestamp, blotter_cash, executed_price):
         # cash, total_pl, vwap from self._positions
@@ -179,10 +180,12 @@ class Ledger:
         db.positions_collection.insert(cache)
 
     def print_pl_cache(self):
-        try:
+        if len(self._pl_cache.index) > 0:
             pl_data = pd.DataFrame(list(db.positions_collection.find()))
             pl_data = pl_data[['Timestamp', 'Cash', 'Total_PL', 'VWAP', 'ExecutedPrice']].sort_values(
                 by='Timestamp', ascending=False)
-            return pl_data
-        except ValueError as e:
-            print("No transactions have been performed to display the history" + str(e))
+            print(pl_data)
+        else:
+            print("No transactions have been performed to display the history")
+            horizontal_line = "-------------------------"
+            print(horizontal_line * 3)

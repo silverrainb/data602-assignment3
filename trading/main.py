@@ -40,15 +40,14 @@ def main(argv):
             print("<<P/L History & Line Chart>>")
             print(horizontal_line * 3)
             pl_data = ledger.print_pl_cache()
-            print(pl_data)
-            try:
+
+            if pl_data is True:
+                print(pl_data)
+                print(horizontal_line * 3)
                 pl_display(pl_data)
-            except ValueError as e:
-                print("No transactions have been performed to display the history" + str(e))
-            print(horizontal_line * 3)
-            print("Should the graph fails to load in the browser,")
-            print("please click: https://plot.ly/~silverrainb/10/vwap-executedprice-total-pl-cash/")
-            print(horizontal_line * 3)
+                print("Should the graph fails to load in the browser,")
+                print("please click: https://plot.ly/~silverrainb/10/vwap-executedprice-total-pl-cash/")
+                print(horizontal_line * 3)
 
         elif choice == "3":  # Show P/L
             print(horizontal_line * 3)
@@ -62,7 +61,6 @@ def main(argv):
             print(horizontal_line * 3)
             print("<<Blotter>>")
             print(horizontal_line * 3)
-
             ledger.print_blotter()
             print(horizontal_line * 3)
 

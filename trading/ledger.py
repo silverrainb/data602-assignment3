@@ -39,7 +39,7 @@ class Ledger:
         try:
             data = self.get_blotter()
             self._cash = data['Cash'][0]
-        except (KeyError, TypeError):
+        except KeyError:
             self._cash = initial_cash
 
     def get_current_cash(self):
@@ -149,14 +149,11 @@ class Ledger:
         db.blotter_collection.insert(records)
 
     def get_blotter(self):
-        try:
-            data = pd.DataFrame(list(db.blotter_collection.find()))
-            data = data[
-                ['Timestamp', 'Side', 'Ticker', 'Volume', 'PricePerShare', 'TotalCosts', 'Cash']].sort_values(
-                by='Timestamp', ascending=False)
-            return data
-        except KeyError:
-            print("No transactions have been performed to display the history")
+        data = pd.DataFrame(list(db.blotter_collection.find()))
+        data = data[
+            ['Timestamp', 'Side', 'Ticker', 'Volume', 'PricePerShare', 'TotalCosts', 'Cash']].sort_values(
+            by='Timestamp', ascending=False)
+        return data
 
     def update_pl_cache(self, timestamp, blotter_cash, executed_price):
         # cash, total_pl, vwap from self._positions

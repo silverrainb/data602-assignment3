@@ -69,8 +69,11 @@ def main(argv):
             print(horizontal_line * 3)
             print("<<Blotter>>")
             print(horizontal_line * 3)
-            blotter = ledger.get_blotter()
-            print(blotter)
+            try:
+                blotter = ledger.get_blotter()
+                print(blotter)
+            except KeyError:
+                print("No transactions have been performed to display the history")
             print(horizontal_line * 3)
 
         elif choice == "1":  # Trade

@@ -4,6 +4,7 @@ import plotly.graph_objs as go
 
 plotly.tools.set_credentials_file(username='silverrainb', api_key='DmYtIA1DTo0aC6AC5z1e')
 
+
 def pl_display(pl_data):
     vwap = go.Scatter(x=pl_data['Timestamp'], y=pl_data['VWAP'], mode='lines+markers', name='VWAP')
     executedprice = go.Scatter(x=pl_data['Timestamp'], y=pl_data['ExecutedPrice'], mode='lines+markers',

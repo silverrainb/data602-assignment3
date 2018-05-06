@@ -1,6 +1,6 @@
 import pandas as pd
 from pymongo import MongoClient
-import record as dr
+import forecast as fc
 
 mongo_client = MongoClient('trading-database', 27017)
 db = mongo_client['crypto']
@@ -26,26 +26,26 @@ class Ledger:
     _WAP = 0
     _UPL = 0
     _RPL = 0
+    _pred_tickers = ['BTC', 'ETH', 'LTC']
 
     blotter_columns = ('Buy|Sell', 'Ticker', 'Volume', 'PricePerShare', 'Timestamp', 'TotalCosts', 'Cash')
     pl_cache_columns = ('Timestamp', 'Cash', 'Total_PL', 'VWAP', 'ExecutedPrice')
 
     def __init__(self, initial_cash):
+        self._pred_data = fc.get_crypto_data(self._pred_tickers)
         self._blotter = pd.DataFrame([], columns=self.blotter_columns).set_index("Timestamp")
         self._pl_cache = pd.DataFrame([], columns=self.pl_cache_columns).set_index("Timestamp")
-        self._cash = initial_cash
         self._positions = initialize_pl()
+        try:
+            data = self.get_blotter()
+            self._cash = data['Cash'][0]
+        except KeyError:
+            self._cash = initial_cash
 
     def get_current_cash(self):
-        """
-        Cash is initialized in main for 100MM and updates whenever transaction occurs.
-        """
         return self._cash
 
     def add_position(self, price_per_share, ticker, volume):
-        """
-        Calculates Position, WAP, UPL when Buy transaction occurs.
-        """
 
         self._cash = self._cash - price_per_share * volume
 
@@ -63,9 +63,7 @@ class Ledger:
 
     def exit_position(self, price_per_share, ticker,
                       volume):
-        """
-        Calculates Position, WAP, RPL when Sell transaction occurs.
-        """
+
         self._cash = self._cash + price_per_share * volume
 
         current_volume = float(self._positions.loc[ticker, ['Position']])
@@ -95,9 +93,7 @@ class Ledger:
         self._positions.loc[ticker, ['UPL']] = upl
 
     def update_positions(self, gdax):
-        """
-        Updates real time price information in P/L and summarize current status.
-        """
+
         try:
             btcusd = gdax.get('BTC-USD', 'price')
             ethusd = gdax.get('ETH-USD', 'price')
@@ -113,16 +109,15 @@ class Ledger:
             self._positions['CashAllocation %'] = round((self._positions['Position'] * self._positions['Market'] / (
                     self._positions['Position'] * self._positions['Market']).sum()) * 100, 2)
 
-            tickers = ['BTC', 'ETH', 'LTC']
-            data = dr.get_crypto_data(tickers)
-            btc_pred = dr.forecast('BTC', data)
-            eth_pred = dr.forecast('ETH', data)
-            self._positions.loc['BTC-USD', ['ARIMA']] = btc_pred
-            self._positions.loc['ETH-USD', ['ARIMA']] = eth_pred
-            btc_pred_b = dr.linear('BTC', data)
-            eth_pred_b = dr.linear('ETH', data)
-            self._positions.loc['BTC-USD', ['HOLT']] = btc_pred_b
-            self._positions.loc['ETH-USD', ['HOLT']] = eth_pred_b
+            # Get forecast and insert in p/l
+            self._positions.loc['BTC-USD', ['ARIMA']] = fc.forecast_arima('BTC', self._pred_data)
+            self._positions.loc['ETH-USD', ['ARIMA']] = fc.forecast_arima('ETH', self._pred_data)
+            self._positions.loc['LTC-USD', ['ARIMA']] = fc.forecast_arima('LTC', self._pred_data)
+
+            self._positions.loc['BTC-USD', ['HOLT']] = fc.forecast_holt('BTC', self._pred_data)
+            self._positions.loc['ETH-USD', ['HOLT']] = fc.forecast_holt('ETH', self._pred_data)
+            self._positions.loc['LTC-USD', ['HOLT']] = fc.forecast_holt('LTC', self._pred_data)
+
             print(self._positions)
             print('CASH    ', self._cash)
 
@@ -153,13 +148,13 @@ class Ledger:
 
         db.blotter_collection.insert(records)
 
-    def print_blotter(self):
+    def get_blotter(self):
         try:
             data = pd.DataFrame(list(db.blotter_collection.find()))
             data = data[
                 ['Timestamp', 'Side', 'Ticker', 'Volume', 'PricePerShare', 'TotalCosts', 'Cash']].sort_values(
                 by='Timestamp', ascending=False)
-            print(data)
+            return data
         except KeyError:
             print("No transactions have been performed to display the history")
 
@@ -179,13 +174,11 @@ class Ledger:
 
         db.positions_collection.insert(cache)
 
-    def print_pl_cache(self):
+    def get_pl_cache(self):
         try:
             pl_data = pd.DataFrame(list(db.positions_collection.find()))
             pl_data = pl_data[['Timestamp', 'Cash', 'Total_PL', 'VWAP', 'ExecutedPrice']].sort_values(
                 by='Timestamp', ascending=False)
-            print(pl_data)
+            return pl_data
         except KeyError:
             print("No transactions have been performed to display the history")
-            horizontal_line = "-------------------------"
-            print(horizontal_line * 3)

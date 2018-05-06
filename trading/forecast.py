@@ -9,18 +9,15 @@ from statsmodels.tsa.api import Holt
 
 
 def timetodate(timestamp):
-    # function converts a Uniloc timestamp into Gregorian date
     return datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%d')
 
 
 def datetotime(date):
-    # function coverts Gregorian date in a given format to timestamp
     return datetime.strptime(date, '%Y-%m-%d').timestamp()
 
 
 def fetchcrypto(ticker):
-    # function fetches a crypto price-series for fsym/tsym and stores
-    # it in pandas DataFrame
+    # function fetches a crypto price-series to store in dataframe
 
     cols = ['date', 'timestamp', 'open', 'high', 'low', 'close']
     lst = ['time', 'open', 'high', 'low', 'close']
@@ -59,17 +56,15 @@ def fetchcrypto(ticker):
 
 
 def get_crypto_data(tickers):
-    # Intializing an empty DataFrame
+
     data = pd.DataFrame()
 
-    # Adding columns with data for all requested crypto
     for ticker in tickers:
         ticker = ticker
         crypto_data = fetchcrypto(ticker)
         data = pd.concat([data, crypto_data['close']], axis=1)
         data = data.dropna(axis=0, how='any')
 
-    # Assign correct names to the columns
     data.columns = tickers
     return data
 
@@ -86,7 +81,7 @@ def inverse_difference(history, yhat, interval=1):
     return yhat + history[-interval]
 
 
-def forecast(ticker, data):
+def forecast_arima(ticker, data):
     ticker = str(ticker).upper()
     dataset = data[ticker]
 
@@ -94,19 +89,17 @@ def forecast(ticker, data):
     year = 365
     diff = difference(X, year)
 
-    # fit model
     model = ARIMA(diff, order=(7, 0, 1))
     model_fit = model.fit(disp=0)
 
-    # one-step out of sample forecast
     start_index = len(diff)
     end_index = len(diff)
-    forecast = model_fit.predict(start=start_index, end=end_index)
-    forecast = inverse_difference(X, forecast, year)
-    return forecast[0]
+    fc_arima = model_fit.predict(start=start_index, end=end_index)
+    fc_arima = inverse_difference(X, fc_arima, year)
+    return fc_arima[0]
 
 
-def linear(ticker, data):
+def forecast_holt(ticker, data):
     ticker = str(ticker).upper()
     dataset = data[ticker]
 
@@ -115,6 +108,6 @@ def linear(ticker, data):
     diff = difference(X, year)
 
     model = Holt(diff).fit(smoothing_level = 0.3,smoothing_slope = 0.1)
-    lforecast = model.forecast()
-    lforecast = inverse_difference(X, lforecast, year)
-    return lforecast[0]
+    fc_holt = model.forecast()
+    fc_holt = inverse_difference(X, fc_holt, year)
+    return fc_holt[0]

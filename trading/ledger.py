@@ -154,13 +154,13 @@ class Ledger:
         db.blotter_collection.insert(records)
 
     def print_blotter(self):
-        if len(self._blotter.index) > 0:
+        try:
             data = pd.DataFrame(list(db.blotter_collection.find()))
             data = data[
                 ['Timestamp', 'Side', 'Ticker', 'Volume', 'PricePerShare', 'TotalCosts', 'Cash']].sort_values(
                 by='Timestamp', ascending=False)
             print(data)
-        else:
+        except KeyError:
             print("No transactions have been performed to display the history")
 
     def update_pl_cache(self, timestamp, blotter_cash, executed_price):
@@ -180,12 +180,12 @@ class Ledger:
         db.positions_collection.insert(cache)
 
     def print_pl_cache(self):
-        if len(self._pl_cache.index) > 0:
+        try:
             pl_data = pd.DataFrame(list(db.positions_collection.find()))
             pl_data = pl_data[['Timestamp', 'Cash', 'Total_PL', 'VWAP', 'ExecutedPrice']].sort_values(
                 by='Timestamp', ascending=False)
             print(pl_data)
-        else:
+        except KeyError:
             print("No transactions have been performed to display the history")
             horizontal_line = "-------------------------"
             print(horizontal_line * 3)

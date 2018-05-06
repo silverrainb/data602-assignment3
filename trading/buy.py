@@ -3,6 +3,7 @@ import gdax_hist as gh
 import gdax_display as gd
 import pandas as pd
 
+
 def buy(ledger, gdax):
     """
     Updates current market price. Calculate ask transaction, pass params to add position in ledger.

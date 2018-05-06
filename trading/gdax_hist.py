@@ -42,5 +42,3 @@ class gdax_hist:
     @staticmethod
     def __date_to_iso8601(date):
         return '{year}-{month:02d}-{day:02d}'.format(year=date.year, month=date.month, day=date.day)
-
-

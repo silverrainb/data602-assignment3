@@ -54,8 +54,11 @@ def main(argv):
             print(horizontal_line * 3)
             print("<<P/L Records>>")
             print(horizontal_line * 3)
-            pl_data = ledger.get_pl_cache()
-            print(pl_data)
+            try:
+                pl_data = ledger.get_pl_cache()
+                print(pl_data)
+            except KeyError:
+                print("No transactions have been performed to display the history")
 
         elif choice == "3":  # Show P/L
             print(horizontal_line * 3)

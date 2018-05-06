@@ -172,10 +172,7 @@ class Ledger:
         db.positions_collection.insert(cache)
 
     def get_pl_cache(self):
-        try:
-            pl_data = pd.DataFrame(list(db.positions_collection.find()))
-            pl_data = pl_data[['Timestamp', 'Cash', 'Total_PL', 'VWAP', 'ExecutedPrice']].sort_values(
-                by='Timestamp', ascending=False)
-            return pl_data
-        except KeyError:
-            print("No transactions have been performed to display the history")
+        pl_data = pd.DataFrame(list(db.positions_collection.find()))
+        pl_data = pl_data[['Timestamp', 'Cash', 'Total_PL', 'VWAP', 'ExecutedPrice']].sort_values(
+            by='Timestamp', ascending=False)
+        return pl_data

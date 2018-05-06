@@ -39,7 +39,7 @@ class Ledger:
         try:
             data = self.get_blotter()
             self._cash = data['Cash'][0]
-        except KeyError:
+        except (KeyError, TypeError):
             self._cash = initial_cash
 
     def get_current_cash(self):

@@ -20,6 +20,7 @@ def main(argv):
     horizontal_line = "-------------------------"
     print(horizontal_line * 2)
     print("DAT602-assignment3 crypto-trading demo.")
+    print("Please wait while initializing the database...")
     gdax = gw.gdax_websocket()
     gdax.start()
     time.sleep(1)
@@ -46,8 +47,8 @@ def main(argv):
                 print("Should the graph fails to load in the browser,")
                 print("Please click: https://plot.ly/~silverrainb/10/vwap-executedprice-total-pl-cash/")
                 print(horizontal_line * 3)
-            except TypeError:
-                print("Unable to load the chart. Please try again.")
+            except KeyError:
+                print("No transactions have been performed to display the history")
                 print(horizontal_line * 3)
 
         elif choice == "4":  # Show P/L Records

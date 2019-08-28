@@ -15,7 +15,7 @@ This shell script initiates mongo, pulling the docker image and running it.
 
 * Docker Hub link
 
-https://hub.docker.com/r/silverrainb/project-crypto-forecast/
+https://hub.docker.com/r/silverrainb/crypto-forecast/
 
 * Visualization
 

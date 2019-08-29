@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+    File: ledger.py
+    Author: Rose Jones
+    Advanced Programming Project CUNY Data Science DATA602
+"""
+
+
 import pandas as pd
 from pymongo import MongoClient
 import forecast as fc

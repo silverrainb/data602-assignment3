@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+    File: sell.py
+    Author: Rose Jones
+    Advanced Programming Project CUNY Data Science DATA602
+"""
+
+
 from datetime import date, timedelta, datetime
 import gdax_hist as gh
 import gdax_display as gd

@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+    File: forecast.py
+    Author: Rose Jones
+    Advanced Programming Project CUNY Data Science DATA602
+"""
+
+
 import numpy as np
 import pandas as pd
 from datetime import datetime

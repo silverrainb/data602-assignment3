@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+    File: gdax_hist.py
+    Author: Rose Jones
+    Advanced Programming Project CUNY Data Science DATA602
+"""
+
+
 from datetime import timedelta
 from time import sleep
 import pandas as pd
